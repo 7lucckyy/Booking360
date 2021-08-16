@@ -16,7 +16,6 @@ module.exports = async (req, res)=>{
         
         const Transaction = await db.transaction();
         
-
         try {
             const HotelUUID = uuidv4()
         

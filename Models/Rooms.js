@@ -39,3 +39,6 @@ module.exports = Rooms;
 Rooms.hasOne(Rooms_imgs, {
     foreignKey: 'rooms_id'
 })
+Rooms_imgs.belongsTo(Rooms, {
+    foreignKey: 'rooms_id'
+})

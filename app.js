@@ -13,14 +13,14 @@ const router = require('./Routes/Router');
 //Setup Express app
 const app = express();
 
-app.use(router)
+app.use('/api/v1', router)
 
 app.use(morgan())
 
 app.use(express.urlencoded({extended: true})); 
 app.use(express.json());
 
-app.post('/register', postUserController);
+
 
 
 

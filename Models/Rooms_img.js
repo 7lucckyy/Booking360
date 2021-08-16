@@ -12,11 +12,11 @@ const Rooms_imgs = db.define('rooms_images', {
         allowNull: false,
         foreignKey: true
     },
-    fimgsrc:{
+    fimage:{
         type: sequelize.STRING,
         allowNull: false,
     },
-    bimgsrc:{
+    bimage:{
         type: sequelize.STRING,
     },
     image:{
