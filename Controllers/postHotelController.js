@@ -13,7 +13,8 @@ const validator = require('validator')
 module.exports = async (req, res)=>{
     try {
 
-        
+        const UserID = req.User.id
+        console.log(req.User);
         const Transaction = await db.transaction();
         
         try {
@@ -59,10 +60,10 @@ module.exports = async (req, res)=>{
         let Fimage = req.files.fimgsrc[0]
         let bimgsrc = req.files.bimgsrc[0]
         let logosrc = req.files.logosrc[0]
-        console.log(req.files);
+        
         const registerHotels = await Hotels.create({
             id: HotelUUID,
-            users_id: users_id,
+            users_id: UserID,
             name: name,
             email: email,
             phone: phone,

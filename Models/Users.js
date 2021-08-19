@@ -1,5 +1,6 @@
 const sequelize = require('sequelize');
 const db = require('../config/db');
+const Hotels = require('./Hotels');
 
 const Users = db.define('users', {
     id: {
@@ -33,3 +34,6 @@ const Users = db.define('users', {
 })
 
 module.exports = Users;
+Users.hasOne(Hotels, {
+    foreignKey: 'users_id'
+})

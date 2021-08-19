@@ -5,15 +5,30 @@ const validator = require('validator');
 const multer = require('multer')
 const { v4: uuidv4 } = require('uuid');
 const RoomFileUpload = require('../Middleware/RoomsFileUpload');
+const Users = require('../Models/Users');
+const Hotels = require('../Models/Hotels');
 
 module.exports = async(req, res) =>{
    
     try {
+      let userID = req.User.id
       const Transaction = await db.transaction();
 
        try {
+         const QueryUser = await Hotels.findOne({
+            where: {
+               users_id: userID
+            },
+         })
+         if(!QueryUser){
+            return res.status(400).json({
+               Success: false,
+               Message: "UnAuthorized to access this",
+               Description: "You not authorised to perform this action"
+            })
+         }
          let RoomUUID = uuidv4();
-         let {hotels_id, name, price, quantity, description, } = req.body;
+         let {name, price, quantity, description, } = req.body;
          
          
          let fimage = req.files.fimgsrc[0]
@@ -38,7 +53,7 @@ module.exports = async(req, res) =>{
          
          const createRoom = await Rooms.create({
              id: RoomUUID,
-             hotels_id: hotels_id,
+             hotels_id: QueryUser.id,
              name: name,
              price: price,
              quantity: quantity,

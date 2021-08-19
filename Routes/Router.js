@@ -11,6 +11,7 @@ const postRoomController = require('../Controllers/postRoomController');
 const RoomFileUpload = require('../Middleware/RoomsFileUpload');
 const loginController = require('../Controllers/loginController');
 const getHotelController = require('../Controllers/getHotelController');
+const VerifyJWTtoken = require('../Auth/VerifyJWTtoken');
 
 
 const router = express.Router()
@@ -18,9 +19,9 @@ router.use(bodyParser.json())
 
 
 
-router.post('/createHotel',  uploads, postHotelController)
+router.post('/createHotel',  [VerifyJWTtoken],uploads, postHotelController)
 router.post('/register', postUserController)
-router.post('/createRoom', RoomFileUpload, postRoomController);
+router.post('/createRoom', [VerifyJWTtoken], RoomFileUpload, postRoomController);
 router.post('/login', loginController)
 router.get('/getHotel', getHotelController)
 
