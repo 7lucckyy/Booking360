@@ -11,6 +11,7 @@ module.exports = async(req, res, next)=>{
                 description: 'Try Logging Again to get Token'
             });
         }
+        
         AuthorizationToken = AuthorizationToken.split(' ')[1];
 
         let User = await jwt.verify(AuthorizationToken, process.env.SECRET_KEY);

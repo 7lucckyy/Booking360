@@ -13,7 +13,7 @@ module.exports = async(req, res) =>{
     try {
       let userID = req.User.id
       const Transaction = await db.transaction();
-
+      
        try {
          const QueryUser = await Hotels.findOne({
             where: {

@@ -8,7 +8,6 @@ module.exports = async(req, res)=>{
     try {
         let Email = req.body.email;
         let Password = req.body.password;
-        console.log(Email);
         const AuthencateUser = await Users.findOne({
             where: {
                 
@@ -42,7 +41,7 @@ module.exports = async(req, res)=>{
         
 
         const AccessToken = (UserID) =>{
-            return jwt.sign(UserID, process.env.JWT_SECRET_KEY, {expiresIn: '1hr'});
+            return jwt.sign(UserID, process.env.SECRET_KEY, {expiresIn: '1hr'});
         }
 
         const Token = AccessToken({ UserID: AuthencateUser.id });

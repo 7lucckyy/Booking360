@@ -8,10 +8,8 @@ const validator = require('validator')
 
 module.exports = async (req, res)=>{
     try {
-        const Transaction = await db.transaction()
-        try {
-            let { name, email, phone, password} = req.body;
-            let Haspassword = await bcrypt.hash(password, 10);
+        let { name, email, phone, password} = req.body;
+
 
             if(validator.isEmpty(name)){
                 return res.status(400).json({
@@ -20,6 +18,13 @@ module.exports = async (req, res)=>{
                     Description: "Name cannot be blank "
                 })
             }
+            if(validator.isNumeric(name)){
+                return res.status(400).json({
+                    Success: false,
+                    Message: "name address can not be numbers",
+                    Description: "name address cannot be "
+                })  
+              }
             if(validator.isEmpty(email)){
                 return res.status(400).json({
                     Success: false,
@@ -27,6 +32,7 @@ module.exports = async (req, res)=>{
                     Description: "Email fill cannot be blank"
                 })
             }
+            
             if(validator.isEmail(email)==false){
                 return res.status(400).json({
                     Successs: false,
@@ -41,6 +47,7 @@ module.exports = async (req, res)=>{
                     Description: "Phone number cant be blank" 
                 })
             }
+            
             if(validator.isEmpty(password)){
                 return res.status(400).json({
                     Success: false,
@@ -55,6 +62,10 @@ module.exports = async (req, res)=>{
                     Description: "Password length is to short"
                 })
             }
+            let Haspassword = await bcrypt.hash(password, 10);
+            const Transaction = await db.transaction()
+        try {
+            
 
 
             const registerUser = await Users.create({
@@ -75,12 +86,15 @@ module.exports = async (req, res)=>{
         } catch (e) {
             Transaction.rollback()
             console.log(e);
+            return res.status(500).json({
+                msg: "Could not complete operation"
+            });    
         }
         
-
-        
     } catch (e) {
-        
+        return res.status(400).json({
+            msg: "The following request bodies are required: name, email, phone,password"
+        });
         console.log(e)
     }
 }

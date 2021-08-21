@@ -14,13 +14,12 @@ module.exports = async (req, res)=>{
     try {
 
         const UserID = req.User.id
-        console.log(req.User);
         const Transaction = await db.transaction();
         
         try {
             const HotelUUID = uuidv4()
         
-        let {users_id, name, email, phone, address, latitude, longitude, state, lga, description} = req.body;
+        let {name, email, phone, address, latitude, longitude, state, lga, description} = req.body;
         
 
         if(validator.isEmpty(name)){
