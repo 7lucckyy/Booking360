@@ -47,6 +47,13 @@ module.exports = async (req, res)=>{
                     Description: "Phone number cant be blank" 
                 })
             }
+            if(phone.length < 11){
+                return res.status(400).json({
+                    Success: false,
+                    message: "Invalid phone number",
+                    Description: "Phone can not be less than 11 digits"
+                })
+            }
             
             if(validator.isEmpty(password)){
                 return res.status(400).json({
@@ -95,6 +102,5 @@ module.exports = async (req, res)=>{
         return res.status(400).json({
             msg: "The following request bodies are required: name, email, phone,password"
         });
-        console.log(e)
     }
 }
