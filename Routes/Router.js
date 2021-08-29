@@ -3,7 +3,7 @@ const express = require('express')
 const postHotelController = require('../Controllers/postHotelController')
 const uploads = require('../Middleware/fileUploads');
 const postUserController = require('../Controllers/postUserController')
-
+const EventHallFiles = require('../Middleware/EventHallFiles')
 
 
 const bodyParser = require('body-parser');
@@ -22,6 +22,7 @@ router.use(bodyParser.json())
 router.post('/createHotel',  [VerifyJWTtoken],uploads, postHotelController)
 router.post('/register', postUserController)
 router.post('/createRoom', [VerifyJWTtoken], RoomFileUpload, postRoomController);
+router.post('./createEventHall', [VerifyJWTtoken], postEventHall, EventHallFiles)
 router.post('/login', loginController)
 router.get('/getHotel', getHotelController)
 
