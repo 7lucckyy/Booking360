@@ -1,20 +1,17 @@
-const db = require('../config/db');
-const Hotels = require('../Models/Hotels');
+const EventHall = require('../Models/EventHall')
+const EventHall_Img = require('../Models/EventHalls_img')
 const { v4: uuidv4 } = require('uuid');
+const db = require('../config/db')
 const multer = require('multer')
-const Hotels_img = require('../Models/Hotels_img');
-const path = require('path')
-const validator = require('validator');
+const validator = require('validator')
 
-
-
-
+const EventHallsImage = require('../Models/EventHalls_img');
+const { Transaction } = require('sequelize/types');
 
 
 module.exports = async (req, res)=>{
-        try {
-
-            let {name, email, phone, address, latitude, longitude, state, lga, description} = req.body;
+    try {
+        let {name, email, phone, address, latitude, longitude, state, lga, description} = req.body;
 
             if(validator.isEmpty(name)){
                 return res.status(400).json({
@@ -92,78 +89,78 @@ module.exports = async (req, res)=>{
                     description: "LGA field must be provide with characters or Alpha-numberic"
                 })
             }
-        try {
+            try {
+                
+                const Transaction = await db.transaction()
+                const QueryEventHall = await EventHall.findOne({
+                    where:{
+                        email: email
+                    }
+                })
+                if(QueryEventHall){
+                    return res.status(400).json({
+                        Success: false,
+                        message: "Email already exists ",
+                        description: "try registering with new email for the eventhall"
+                    })
+                }
+                let userID = req.User.id
+                const EventHallUUID = uuidv4()
 
+                let frontimage = req.files.fimgsrc[0]
+                let bimage = req.files.bimgsrc[0]
+                let logosrc = req.files.logosrc[0]
             
-            const UserID = req.User.id
-            const Transaction = await db.transaction();
-            const CheckUser =  await Hotels.findOne({
-            where:{
-                email: email
-            }
-            })
-            if(CheckUser){
-                return res.status(400).json({
-                Success: false,
-                Message: "Hotel Already exist",
-                Description: "Hotel Email already exist on the Database"
-            })
-            }
 
-            let Fimage = req.files.fimgsrc[0]
-            let bimgsrc = req.files.bimgsrc[0]
-            let logosrc = req.files.logosrc[0]
-        
-            const HotelUUID = uuidv4()
-            const registerHotels = await Hotels.create({
-                id: HotelUUID,
-                users_id: UserID,
-                name: name,
-                email: email,
-                phone: phone,
-                address: address,
-                latitude: latitude,
-                longitude: longitude,
-                state: state, 
-                lga: lga,
-                is_deleted: 0,
-                description: description,
-            })
-            {
-                transaction:Transaction
-            }
-        
-            await Hotels_img.create({
-                id: uuidv4(),
-                hotels_id: HotelUUID,
-                fimgsrc: Fimage.path,
-                bimgsrc: bimgsrc.path,
-                logosrc: logosrc.path,
-                is_deleted: 0
+                const createEventHall = await EventHall.create({
+                    id: EventHallUUID,
+                    users_id: userID,
+                    name: name,
+                    email: email,
+                    phone: phone,
+                    address: address,
+                    latitude: latitude,
+                    longitude: longitude,
+                    state: state,
+                    lga: lga,
+                    is_deleted: 0,
+                    description: description,
+                    logosrc: logosrc.path
+                
+                })
+                {
+                    transaction: Transaction
+                }
+                const EventImgUUID = uuidv4()
+                await EventHall_Img.create({
+                    id: EventImgUUID,
+                    eventhalls_id: EventHallUUID,
+                    frontimage: frontimage.path,
+                    bimage: bimage.path,
+                    is_deleted: 0
 
-            })
-            {
-                transaction:Transaction
+                })
+                {
+                    transaction:Transaction
+                }
+            
+                await Transaction.commit();
+                    return res.status(201).json({
+                    msg: "Created Successfully"
+                })
+
+            } catch (e) {
+               await Transaction.rollback()
+               return res.status(500).json({
+                   Success: false, 
+                   message: "Internal Server error",
+                   description: "Something went wrong"
+               })
             }
-        
-            await Transaction.commit();
-                return res.status(201).json({
-                msg: "Created Successfully"
-            })
-        } catch (e) {
-            await Transaction.rollback();
-            res.status(500).json({
-                Success: false,
-                Message: "Internal Server error ",
-                Description: "Something went wrong possibly database error"
-            })
-                console.log(e) 
-            }
-        
     } catch (e) {
-        console.log(e)
-        return res.status(400).json({
-            msg: "The following request bodies are required: name, email, phone, password, address, state, lga etc"
-        });
+       return res.status(400).json({
+           Success: false,
+           message: "The following bodies are requred name, email, address, state, lga, etc"
+       }) 
     }
 }

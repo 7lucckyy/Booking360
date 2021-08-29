@@ -11,7 +11,7 @@ const Hotels = require('../Models/Hotels');
 module.exports = async(req, res) =>{
    
     try {
-         let RoomUUID = uuidv4();
+         
          let {name, price, quantity, description, } = req.body;
 
          let fimage = req.files.fimgsrc[0]
@@ -55,7 +55,7 @@ module.exports = async(req, res) =>{
                      Description: "You not authorised to perform this action"
                   })
                }
-               
+               let RoomUUID = uuidv4();
                const createRoom = await Rooms.create({
                   id: RoomUUID,
                   hotels_id: QueryUser.id,
