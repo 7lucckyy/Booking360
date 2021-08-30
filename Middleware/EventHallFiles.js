@@ -25,7 +25,7 @@ const EventFileUpload = multer({
        fileSize: 1024 * 1024 * 5 
     }
     
-}).fields([{name: 'frontimage'}, {name: 'bimage'}, {name: 'logosrc'}])
+}).fields([{name: 'frontimage'}, {name: 'bimage'}, {name: 'logsrc'}])
 
 
 module.exports = EventFileUpload;

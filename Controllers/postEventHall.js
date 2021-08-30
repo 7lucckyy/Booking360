@@ -6,7 +6,8 @@ const multer = require('multer')
 const validator = require('validator')
 
 const EventHallsImage = require('../Models/EventHalls_img');
-const { Transaction } = require('sequelize/types');
+
+
 
 
 module.exports = async (req, res)=>{
@@ -89,12 +90,13 @@ module.exports = async (req, res)=>{
                     description: "LGA field must be provide with characters or Alpha-numberic"
                 })
             }
+            
             try {
                 
-                const Transaction = await db.transaction()
+                
                 const QueryEventHall = await EventHall.findOne({
                     where:{
-                        email: email
+                        email: req.body.email
                     }
                 })
                 if(QueryEventHall){
@@ -106,58 +108,68 @@ module.exports = async (req, res)=>{
                 }
                 let userID = req.User.id
                 const EventHallUUID = uuidv4()
-
-                let frontimage = req.files.fimgsrc[0]
-                let bimage = req.files.bimgsrc[0]
-                let logosrc = req.files.logosrc[0]
+                let frontimage = req.files.frontimage[0]
+                let bimage = req.files.bimage[0]
+                let logsrc = req.files.logsrc[0]
             
+                const Transaction = await db.transaction()
 
-                const createEventHall = await EventHall.create({
-                    id: EventHallUUID,
-                    users_id: userID,
-                    name: name,
-                    email: email,
-                    phone: phone,
-                    address: address,
-                    latitude: latitude,
-                    longitude: longitude,
-                    state: state,
-                    lga: lga,
-                    is_deleted: 0,
-                    description: description,
-                    logosrc: logosrc.path
+                try {
+                    const createEventHall = await EventHall.create({
+                        id: EventHallUUID,
+                        users_id: userID,
+                        name: name,
+                        email: email,
+                        phone: phone,
+                        address: address,
+                        latitude: latitude,
+                        longitude: longitude,
+                        state: state,
+                        lga: lga,
+                        is_deleted: 0,
+                        description: description,
+                        logsrc: logsrc.path
+                    
+                    })
+                    {
+                        transaction: Transaction
+                    }
+                    const EventImgUUID = uuidv4()
+                    await EventHall_Img.create({
+                        id: EventImgUUID,
+                        eventhalls_id: EventHallUUID,
+                        frontimage: frontimage.path,
+                        bimage: bimage.path,
+                        is_deleted: 0
+    
+                    }),
+                    {
+                        transaction:Transaction
+                    }
                 
-                })
-                {
-                    transaction: Transaction
+                    await Transaction.commit();
+                        return res.status(201).json({
+                        msg: "Created Successfully"
+                    })    
+                } catch (error) {
+                    await Transaction.rollback()                  
+                    return res.status(500).json({
+                        Success: false, 
+                        message: "Internal Server error",
+                        description: "Something went wrong"
+                    })  
                 }
-                const EventImgUUID = uuidv4()
-                await EventHall_Img.create({
-                    id: EventImgUUID,
-                    eventhalls_id: EventHallUUID,
-                    frontimage: frontimage.path,
-                    bimage: bimage.path,
-                    is_deleted: 0
-
-                })
-                {
-                    transaction:Transaction
-                }
-            
-                await Transaction.commit();
-                    return res.status(201).json({
-                    msg: "Created Successfully"
-                })
-
             } catch (e) {
-               await Transaction.rollback()
+
+               console.log(e);
                return res.status(500).json({
-                   Success: false, 
-                   message: "Internal Server error",
-                   description: "Something went wrong"
-               })
+                Success: false, 
+                message: "Internal Server error",
+                description: "Something went wrong"
+            })
             }
     } catch (e) {
+        console.log(e);
        return res.status(400).json({
            Success: false,
            message: "The following bodies are requred name, email, address, state, lga, etc"

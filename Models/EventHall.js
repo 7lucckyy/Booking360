@@ -1,6 +1,8 @@
 const sequelize = require('sequelize');
 const db = require('../config/db');
+const EventHallsImage = require('./EventHalls_img');
 const Halls = require('./Halls');
+const Users = require('./Users')
 
 const EventHall = db.define('eventhalls', {
     id: {
@@ -59,7 +61,7 @@ const EventHall = db.define('eventhalls', {
         allowNull: false
 
     },
-    logosrc:{
+    logsrc:{
         type: sequelize.STRING,
         
 
@@ -75,5 +77,7 @@ EventHall.belongsTo(Users, {
 EventHall.hasMany(Halls, {
     foreignKey: 'eventhalls_id'
 })
-
+EventHall.hasOne(EventHallsImage, {
+    foreignKey: 'eventhalls_id'
+})
 module.exports = EventHall;

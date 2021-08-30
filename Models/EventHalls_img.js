@@ -25,5 +25,3 @@ const EventHallsImage = db.define('eventhalls_img', {
 })
 
 module.exports = EventHallsImage;
-
-EventHallsImage.belongsTo(Halls);

@@ -72,5 +72,8 @@ Hotels.hasOne(Hotels_img, {
 Hotels_img.belongsTo(Hotels, {
     foreignKey: 'hotels_id'
 })
+Hotels.hasMany(Rooms, {
+    foreignKey: 'hotels_id'
+})
 
 module.exports = Hotels;

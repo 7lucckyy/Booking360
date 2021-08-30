@@ -38,9 +38,4 @@ const Halls = db.define('halls', {
 
 module.exports = Halls;
 
-Halls.belongsTo(EventHall, {
-    foreignKey: 'eventhalls_id'
-})
-Halls.hasOne(EventHallsImage, {
-    foreignKey: 'eventhalls_id'
-})
+

@@ -39,15 +39,17 @@ module.exports = async(req, res) =>{
                Description: "Provide price"
             })
          }
-      
+         const Transaction = await db.transaction();
+
        try {
+          
                let userID = req.User.id
-               const Transaction = await db.transaction();
                const QueryUser = await Hotels.findOne({
                   where: {
                      users_id: userID
                   },
                })
+               
                if(!QueryUser){
                   return res.status(400).json({
                      Success: false,
