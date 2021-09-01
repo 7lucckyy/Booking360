@@ -9,19 +9,11 @@ module.exports = async(req, res)=>{
         let Email = req.body.email;
         let Password = req.body.password;
         const AuthencateUser = await Users.findOne({
-            where: {
-                
+            where:{
                 email: Email,
+                is_deleted: false,
             }
         })
-        if(AuthencateUser.is_deleted != 0){
-            return res.status(404).json({
-                success: false,
-                message: "Oops User not found ",
-                description: "kindly provide valid login credential"
-            })
-        }
-
         if(!AuthencateUser){
             return res.status(400).json({
                 success: false,

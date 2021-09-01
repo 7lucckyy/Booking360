@@ -95,7 +95,8 @@ module.exports = async (req, res)=>{
 
                 const QueryAuthHall = await EventHall.findAll({
                     wehere: {
-                        users_id: userID
+                        users_id: userID,
+                        is_deleted: 0
                     },inculde:[{
                         model: EventHall_Img
                     }]
@@ -109,51 +110,54 @@ module.exports = async (req, res)=>{
                     })
                 }
                 
-                const EventHallUUID = uuidv4()
+                
                 let frontimage = req.files.frontimage[0]
                 let bimage = req.files.bimage[0]
                 let logsrc = req.files.logsrc[0]
-            
+                
+                const EventHallUUID = uuidv4()
+                
+
                 const Transaction = await db.transaction()
 
                 try {
-                    const UpdateEventHall = await EventHall.create({
-                        id: EventHallUUID,
-                        users_id: userID,
-                        name: name,
-                        email: email,
-                        phone: phone,
-                        address: address,
-                        latitude: latitude,
-                        longitude: longitude,
-                        state: state,
-                        lga: lga,
-                        is_deleted: 0,
-                        description: description,
-                        logsrc: logsrc.path
                     
-                    })
+                        QueryAuthHall.id = EventHallUUID
+                        QueryAuthHall.users_id = userID
+                        QueryAuthHall.name = name
+                        QueryAuthHall.email = email
+                        QueryAuthHall.phone = phone
+                        QueryAuthHall.address = address
+                        QueryAuthHall.latitude = latitude
+                        QueryAuthHall.longitude = longitude
+                        QueryAuthHall.state = state
+                        QueryAuthHall.lga = lga
+                        QueryAuthHall.is_deleted = 0
+                        QueryAuthHall.description = description
+                        QueryAuthHall.logsrc = logsrc.path
+                    
+                    
                     {
                         transaction: Transaction
                     }
                     const EventImgUUID = uuidv4()
-                    await EventHall_Img.create({
-                        id: EventImgUUID,
-                        eventhalls_id: EventHallUUID,
-                        frontimage: frontimage.path,
-                        bimage: bimage.path,
-                        is_deleted: 0
+
+                    
+                    QueryAuthHall.id = EventImgUUID
+                    QueryAuthHall.eventhalls_id = EventHallUUID
+                    QueryAuthHall.frontimage = frontimage.path
+                    QueryAuthHall.bimage = bimage.path
+                    QueryAuthHall.is_deleted = 0
     
-                    }),
-                    {
-                        transaction:Transaction
-                    }
+                    await QueryAuthHall.save({
+                        transaction: Transaction
+                    })
                 
                     await Transaction.commit();
                         return res.status(201).json({
                         msg: "EventHall updated successfully"
                     })    
-                } catch (error) {
+                } catch (e) {
                     await Transaction.rollback()                  
                     return res.status(500).json({
                         Success: false, 

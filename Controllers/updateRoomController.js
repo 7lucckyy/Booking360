@@ -12,10 +12,8 @@ module.exports = async(req, res) =>{
    
     try {
          
-         let {name, price, quantity, description, } = req.body;
+         let {name, price, quantity, description } = req.body;
 
-         
-         
          if(validator.isEmpty(name)){
             return res.json({
                Success: false,
@@ -43,69 +41,61 @@ module.exports = async(req, res) =>{
                
                const QueryUser = await Hotels.findOne({
                   where: {
-                     users_id: userID
+                     users_id: userID,
+                     is_deleted: false
                   },include:[{
                       model: Rooms
                   }]
                })
                let HotelID = QueryUser.id
 
-               const QueryHotelAuth = await Rooms.findOne({
-                   where:{
-                       hotels_id: HotelID
-                   }
-               })
-
-               const QueryRoomAuth = await Rooms.findOne({
-                   where:{
-                       id: QueryHotelAuth.id
-                   }
-               })
-               await QueryRoomAuth.update({
-                   is_deleted: 1
-               })
                
+
                 let fimage = req.files.fimgsrc[0]
                 let bimage = req.files.bimgsrc[0]
                 let image = req.files.image[0]
 
                 const Transaction = await db.transaction();
                try {
-                
-                let RoomUUID = uuidv4();
-               const createRoom = await Rooms.create({
-                  id: RoomUUID,
-                  hotels_id: QueryUser.id,
-                  name: name,
-                  price: price,
-                  quantity: quantity,
-                  description: description,
-                  is_deleted: 0
-         
-               }) 
-               {
-                  transaction: Transaction
-               }
-               await Rooms_imgs.create({
-                  id: uuidv4(),
-                  rooms_id: RoomUUID,
-                  fimage: fimage.path,
-                  bimage: bimage.path,
-                  image: image.path,
-                  is_deleted: 0
-
-
+                const QueryHotelAuth = await Rooms.findOne({
+                   where:{
+                       hotels_id: HotelID
+                   }
                })
+               const RoomUUID = uuidv4();
+               
+                QueryHotelAuth.id = RoomUUID
+                QueryHotelAuth.hotels_id = HotelID
+                QueryHotelAuth.name = name
+                QueryHotelAuth.price = price
+                QueryHotelAuth.quantity = quantity
+                QueryHotelAuth.description = description
+                QueryHotelAuth.is_deleted = 0
+         
                {
                   transaction: Transaction
                }
+               let RoomImgUUID = uuidv4()
+               
+               QueryHotelAuth.id = RoomImgUUID
+               QueryHotelAuth.rooms_id = RoomUUID
+               QueryHotelAuth.fimage = fimage.path
+               QueryHotelAuth.bimage = bimage.path
+               QueryHotelAuth.image = image.path
+               QueryHotelAuth.is_deleted = 0
+
+
+               await QueryHotelAuth.save({
+                  transaction: Transaction
+               })
 
                await Transaction.commit();
                return res.status(201).json({
-                  Message: "Room Created Successfully"
+                  Message: "Updated Created Successfully"
                })
                } catch (e) {
                 await Transaction.rollback();
+                console.log(e);
                }
                
             } catch (e) {

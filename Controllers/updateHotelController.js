@@ -92,17 +92,14 @@ module.exports = async (req, res)=>{
                     description: "LGA field must be provide with characters or Alpha-numberic"
                 })
             }
-        try {
-
-            
             const UserID = req.User.id
-            const Transaction = await db.transaction();
-            const CheckUser =  await Hotels.findOne({
+            
+            const AuthQueryHotel =  await Hotels.findOne({
             where:{
                 users_id: UserID
             }
             })
-            if(!CheckUser){
+            if(!AuthQueryHotel){
                 return res.status(404).json({
                 Success: false,
                 Message: "Hotel does not exist",
@@ -114,38 +111,43 @@ module.exports = async (req, res)=>{
             let bimgsrc = req.files.bimgsrc[0]
             let logosrc = req.files.logosrc[0]
         
-            const HotelUUID = uuidv4()
-            const updateHotels = await Hotels.create({
-                id: HotelUUID,
-                users_id: UserID,
-                name: name,
-                email: email,
-                phone: phone,
-                address: address,
-                latitude: latitude,
-                longitude: longitude,
-                state: state, 
-                lga: lga,
-                is_deleted: 0,
-                description: description,
-            })
-            {
-                transaction:Transaction
-            }
-        
-            await Hotels_img.create({
-                id: uuidv4(),
-                hotels_id: HotelUUID,
-                fimgsrc: Fimage.path,
-                bimgsrc: bimgsrc.path,
-                logosrc: logosrc.path,
-                is_deleted: 0
 
-            })
+            const Transaction = await db.transaction();
+        try {
+            const HotelUUID = uuidv4()
+            const HotelImgUUID = uuidv4()
+        
+            AuthQueryHotel.id = HotelUUID
+            AuthQueryHotel.users_id = UserID
+            AuthQueryHotel.name = name
+            AuthQueryHotel.email = email
+            AuthQueryHotel. phone= phone
+            AuthQueryHotel.address = address
+            AuthQueryHotel.latitude = latitude
+            AuthQueryHotel.longitude = longitude,
+            AuthQueryHotel.state = state 
+            AuthQueryHotel.lga = lga
+            AuthQueryHotel.is_deleted = 0
+            AuthQueryHotel.description = description
+            
             {
                 transaction:Transaction
             }
         
+            
+            AuthQueryHotel.id = HotelImgUUID
+            AuthQueryHotel.hotels_id = HotelUUID
+            AuthQueryHotel.fimgsrc = Fimage.path
+            AuthQueryHotel.bimgsrc = bimgsrc.path
+            AuthQueryHotel.logosrc = logosrc.path
+            AuthQueryHotel.is_deleted = 0
+
+            
+            await AuthQueryHotel.save({
+                
+                transaction:Transaction
+                
+            })
             await Transaction.commit();
                 return res.status(201).json({
                 msg: "Updated Successfully"
