@@ -2,10 +2,7 @@ require('dotenv').config();
 const express = require('express');
 
 const morgan = require('morgan');
-const bodyParser = require('body-parser');
 const db = require('./config/db');
-const postUserController = require('./Controllers/postUserController');
-const postHotelController = require('./Controllers/postHotelController');
 const router = require('./Routes/Router');
 
 

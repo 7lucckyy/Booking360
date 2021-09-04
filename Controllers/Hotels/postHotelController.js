@@ -1,4 +1,4 @@
-const db = require('../config/db');
+const db = require('.../config/db')
 const Hotels = require('../Models/Hotels');
 const { v4: uuidv4 } = require('uuid');
 const multer = require('multer')
@@ -126,7 +126,7 @@ module.exports = async (req, res)=>{
                 longitude: longitude,
                 state: state, 
                 lga: lga,
-                is_deleted: 0,
+                is_deleted: false,
                 description: description,
             })
             {
@@ -139,7 +139,7 @@ module.exports = async (req, res)=>{
                 fimgsrc: Fimage.path,
                 bimgsrc: bimgsrc.path,
                 logosrc: logosrc.path,
-                is_deleted: 0
+                is_deleted: false
 
             })
             {

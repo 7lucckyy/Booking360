@@ -93,7 +93,7 @@ module.exports = async (req, res)=>{
                 
                 let userID = req.User.id
 
-                const QueryAuthHall = await EventHall.findAll({
+                const QueryAuthHall = await EventHall.findOne({
                     wehere: {
                         users_id: userID,
                         is_deleted: 0
@@ -117,13 +117,18 @@ module.exports = async (req, res)=>{
                 
                 const EventHallUUID = uuidv4()
                 
+                const QueryEventImg = await EventHall_Img.findOne({
+                    where: {
+                        eventhalls_id: QueryAuthHall.id,
+                        is_deleted: 0
+                    }
+                })
 
                 const Transaction = await db.transaction()
 
                 try {
                     
-                        QueryAuthHall.id = EventHallUUID
-                        QueryAuthHall.users_id = userID
+
                         QueryAuthHall.name = name
                         QueryAuthHall.email = email
                         QueryAuthHall.phone = phone
@@ -132,7 +137,6 @@ module.exports = async (req, res)=>{
                         QueryAuthHall.longitude = longitude
                         QueryAuthHall.state = state
                         QueryAuthHall.lga = lga
-                        QueryAuthHall.is_deleted = 0
                         QueryAuthHall.description = description
                         QueryAuthHall.logsrc = logsrc.path
                     
@@ -143,11 +147,10 @@ module.exports = async (req, res)=>{
                     const EventImgUUID = uuidv4()
 
                     
-                    QueryAuthHall.id = EventImgUUID
-                    QueryAuthHall.eventhalls_id = EventHallUUID
-                    QueryAuthHall.frontimage = frontimage.path
-                    QueryAuthHall.bimage = bimage.path
-                    QueryAuthHall.is_deleted = 0
+
+                    QueryEventImg.frontimage = frontimage.path
+                    QueryEventImg.bimage = bimage.path
+                    QueryEventImg.is_deleted = 0
     
                     await QueryAuthHall.save({
                         transaction: Transaction

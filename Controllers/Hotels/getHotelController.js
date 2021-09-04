@@ -1,7 +1,7 @@
-const db = require('../config/db')
-const Hotels = require('../Models/Hotels');
-const Hotels_img = require('../Models/Hotels_img');
-const { get } = require('../Routes/Router');
+const db = require('../../config/db')
+const Hotels = require('../../Models/Hotels');
+const Hotels_img = require('../../Models/Hotels_img');
+const { get } = require('../../Routes/Router');
 
 module.exports = async(req, res)=>{
     try {

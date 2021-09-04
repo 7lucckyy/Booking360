@@ -92,11 +92,13 @@ module.exports = async (req, res)=>{
                     description: "LGA field must be provide with characters or Alpha-numberic"
                 })
             }
+
             const UserID = req.User.id
             
             const AuthQueryHotel =  await Hotels.findOne({
             where:{
-                users_id: UserID
+                users_id: UserID,
+                is_deleted: false
             }
             })
             if(!AuthQueryHotel){
@@ -107,17 +109,21 @@ module.exports = async (req, res)=>{
             })
             }
 
+            let QueryHotelImg = await Hotels_img.findOne({
+                where: {
+                    hotels_id: AuthQueryHotel.id,
+                    is_deleted: false
+                }
+            })
+    
             let Fimage = req.files.fimgsrc[0]
             let bimgsrc = req.files.bimgsrc[0]
             let logosrc = req.files.logosrc[0]
         
-
+            
             const Transaction = await db.transaction();
         try {
-            const HotelUUID = uuidv4()
-            const HotelImgUUID = uuidv4()
-        
-            AuthQueryHotel.id = HotelUUID
+    
             AuthQueryHotel.users_id = UserID
             AuthQueryHotel.name = name
             AuthQueryHotel.email = email
@@ -134,14 +140,20 @@ module.exports = async (req, res)=>{
                 transaction:Transaction
             }
         
+            let fimgsrc = req.files.fimgsrc[0]
+            let bimgsrc = req.files.bimgsrc[0]
+            let logosrc = req.files.logosrc[0]
             
-            AuthQueryHotel.id = HotelImgUUID
-            AuthQueryHotel.hotels_id = HotelUUID
-            AuthQueryHotel.fimgsrc = Fimage.path
-            AuthQueryHotel.bimgsrc = bimgsrc.path
-            AuthQueryHotel.logosrc = logosrc.path
-            AuthQueryHotel.is_deleted = 0
-
+            //console.log(fimgsrc.path);
+            console.log(QueryHotelImg);
+            QueryHotelImg.fimgsrc = fimgsrc.path
+            QueryHotelImg.bimgsrc = bimgsrc.path
+            QueryHotelImg.logosrc = logosrc.path
+            
+            
+            await QueryHotelImg.save({
+                transaction: Transaction
+            })
             
             await AuthQueryHotel.save({
                 

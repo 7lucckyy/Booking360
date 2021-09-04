@@ -43,12 +43,11 @@ module.exports = async(req, res) =>{
                   where: {
                      users_id: userID,
                      is_deleted: false
-                  },include:[{
-                      model: Rooms
-                  }]
+                  }
                })
                let HotelID = QueryUser.id
 
+               
                
 
                 let fimage = req.files.fimgsrc[0]
@@ -62,27 +61,29 @@ module.exports = async(req, res) =>{
                        hotels_id: HotelID
                    }
                })
-               const RoomUUID = uuidv4();
+
+
+               const QueryRoomImgAuth = await Rooms_imgs.findOne({
+                  where:{
+                      rooms_id: QueryHotelAuth.id
+                  }
+              })
                
-                QueryHotelAuth.id = RoomUUID
-                QueryHotelAuth.hotels_id = HotelID
+               
                 QueryHotelAuth.name = name
                 QueryHotelAuth.price = price
                 QueryHotelAuth.quantity = quantity
                 QueryHotelAuth.description = description
-                QueryHotelAuth.is_deleted = 0
+                
          
                {
                   transaction: Transaction
                }
-               let RoomImgUUID = uuidv4()
+
+               QueryRoomImgAuth.fimage = fimage.path
+               QueryRoomImgAuth.bimage = bimage.path
+               QueryRoomImgAuth.image = image.path
                
-               QueryHotelAuth.id = RoomImgUUID
-               QueryHotelAuth.rooms_id = RoomUUID
-               QueryHotelAuth.fimage = fimage.path
-               QueryHotelAuth.bimage = bimage.path
-               QueryHotelAuth.image = image.path
-               QueryHotelAuth.is_deleted = 0
 
 
                await QueryHotelAuth.save({
