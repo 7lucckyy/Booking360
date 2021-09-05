@@ -1,13 +1,9 @@
-const EventHall = require('../Models/EventHall')
-const EventHall_Img = require('../Models/EventHalls_img')
+const EventHall = require('../../Models/EventHall')
+const EventHall_Img = require('../../Models/EventHalls_img')
 const { v4: uuidv4 } = require('uuid');
-const db = require('../config/db')
+const db = require('../../config/db')
 const multer = require('multer')
 const validator = require('validator')
-
-const EventHallsImage = require('../Models/EventHalls_img');
-
-
 
 
 module.exports = async (req, res)=>{

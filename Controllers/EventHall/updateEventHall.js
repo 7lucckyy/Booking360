@@ -1,10 +1,10 @@
-const db = require('../config/db')
-const EventHall = require('../Models/EventHall')
-const EventHall_Img = require('../Models/EventHalls_img')
+const db = require('../../config/db')
+const EventHall = require('../../Models/EventHall')
+const EventHall_Img = require('../../Models/EventHalls_img')
 const multer = require('multer')
 const { v4: uuidv4 } = require('uuid');
 const validator = require('validator')
-const Users = require('../Models/Users');
+
 
 
 

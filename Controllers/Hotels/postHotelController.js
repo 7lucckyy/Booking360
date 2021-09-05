@@ -1,8 +1,8 @@
-const db = require('.../config/db')
-const Hotels = require('../Models/Hotels');
+const db = require('../../config/db')
+const Hotels = require('../../Models/Hotels')
+const Users = require('../../Models/Users')
 const { v4: uuidv4 } = require('uuid');
 const multer = require('multer')
-const Hotels_img = require('../Models/Hotels_img');
 const path = require('path')
 const validator = require('validator');
 

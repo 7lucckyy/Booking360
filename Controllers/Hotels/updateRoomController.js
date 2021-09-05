@@ -1,12 +1,10 @@
-const db = require('../config/db');
-const Rooms = require('../Models/Rooms');
-const Rooms_imgs = require('../Models/Rooms_img');
+const db = require('../../config/db');
+const Rooms = require('../../Models/Rooms');
+const Rooms_imgs = require('../../Models/Rooms_img');
 const validator = require('validator');
 const multer = require('multer')
 const { v4: uuidv4 } = require('uuid');
-const RoomFileUpload = require('../Middleware/RoomsFileUpload');
-const Users = require('../Models/Users');
-const Hotels = require('../Models/Hotels');
+const Hotels = require('../../Models/Hotels');
 
 module.exports = async(req, res) =>{
    

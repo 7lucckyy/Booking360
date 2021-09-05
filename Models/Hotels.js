@@ -1,7 +1,6 @@
 const sequelize = require('sequelize');
 const db = require('../config/db');
 const Rooms = require('./Rooms');
-const Users = require('./Users');
 const Hotels_img = require('./Hotels_img')
 
 const Hotels = db.define('hotels', {

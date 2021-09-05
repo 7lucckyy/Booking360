@@ -1,5 +1,5 @@
-const db = require('../config/db');
-const Users = require('../Models/Users');
+const db = require('../../config/db');
+const Users = require('../../Models/Users');
 const { v4: uuidv4 } = require('uuid');
 const bcrypt = require('bcryptjs');
 const validator = require('validator')
